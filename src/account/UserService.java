@@ -1,11 +1,17 @@
-package conta;
+package account;
 
 import java.util.Scanner;
 
-public class SistemaCadastro {
+public class UserService {
     Scanner scanner = new Scanner(System.in);
 
-    public Usuario cadastrar() {
+    public User cadastrar() {
+
+        System.out.println("""
+                   
+        --------CADASTRO DA BIBLIOTECA--------
+                
+                """);
 
         while (true) {
 
@@ -17,6 +23,7 @@ public class SistemaCadastro {
 
             boolean letraMaiuscula = false;
             boolean temNumero = false;
+            boolean letraMinuscula = false;
 
             for (int i = 0; i < senha.length(); i++) {
                 char c = senha.charAt(i);
@@ -25,23 +32,27 @@ public class SistemaCadastro {
                     letraMaiuscula = true;
                 }
 
+                if (Character.isLowerCase(c)) {
+                    letraMinuscula = true;
+                }
+
                 if (Character.isDigit(c)) {
                     temNumero = true;
                 }
 
             }
 
-            if (nomeusuario.length() <= 9 && senha.length() <= 9 && letraMaiuscula && temNumero) {
+            if (nomeusuario.length() <= 9 && senha.length() <= 9 && letraMaiuscula && letraMinuscula && temNumero) {
                 System.out.println("""
                         Carregando....
                         
-                        ---------------------------------------
-                                  CADASTRO REALIZADO.
-                        ---------------------------------------
+                        
+                        --------CADASTRO REALIZADO--------
+                        
                         
                         Sua conta foi criada com sucesso.
                         """);
-                return new Usuario(nomeusuario, senha);
+                return new User(nomeusuario, senha);
             }
 
             System.out.println("""

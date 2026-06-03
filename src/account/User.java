@@ -1,10 +1,10 @@
-package conta;
+package account;
 
-public class Usuario {
+public class User {
     private String nomeusuario;
     private String senha;
 
-    public Usuario( String nomeusuario, String senha) {
+    public User(String nomeusuario, String senha) {
         this.nomeusuario = nomeusuario;
         this.senha = senha;
     }
