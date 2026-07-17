@@ -1,22 +1,18 @@
 package library;
 
 public class Book {
-    private String nome;
-    private String escritor;
+    private String titulo;
     private boolean lido;
+    private String autor;
 
-    public Book(String nome, String escritor){
-        this.nome = nome;
-        this.escritor = escritor;
+    public Book(String titulo, String autor){
+        this.titulo = titulo;
         this.lido = false;
+        this.autor = autor;
     }
 
-    public String getNome() {
-        return this.nome;
-    }
-
-    public String getEscritor() {
-        return this.escritor;
+    public String getTitulo() {
+        return this.titulo;
     }
 
     public boolean isLido() {
@@ -25,5 +21,9 @@ public class Book {
 
     public void setLido(boolean lido) {
         this.lido = lido;
+    }
+
+    public String getAutor() {
+        return  this.autor;
     }
 }

@@ -33,8 +33,8 @@ public class LibraryService {
 
             System.out.println( i +
 
-                    "- Livro: " + livro.getNome() +
-                    "- \nAutor: " + livro.getEscritor()
+                    "- Livro: " + livro.getTitulo() +
+                    "- \nAutor: " + livro.getAutor()
             );
 
             if (livro.isLido()) {

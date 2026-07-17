@@ -1,17 +1,25 @@
 package account;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Scanner;
 
-public class UserService {
-    Scanner scanner = new Scanner(System.in);
+public class Register {
 
-    public User cadastrar() {
+    private Connection conexao;
+
+    public Register(Connection conexao) {
+        this.conexao = conexao;
+    }
+
+    public User cadastrar(Scanner scanner) {
 
         System.out.println("""
-                   
+       
         --------CADASTRO DA BIBLIOTECA--------
-                
-                """);
+        
+              """);
 
         while (true) {
 
@@ -20,6 +28,7 @@ public class UserService {
 
             System.out.println("Digita a senha do seu usuário: ");
             String senha = scanner.nextLine();
+
 
             boolean letraMaiuscula = false;
             boolean temNumero = false;
@@ -43,16 +52,31 @@ public class UserService {
             }
 
             if (nomeusuario.length() <= 9 && senha.length() <= 9 && letraMaiuscula && letraMinuscula && temNumero) {
-                System.out.println("""
-                        Carregando....
-                        
-                        
-                        --------CADASTRO REALIZADO--------
-                        
-                        
-                        Sua conta foi criada com sucesso.
-                        """);
-                return new User(nomeusuario, senha);
+
+                String sql = "INSERT INTO usuario (nome_usuario, senha_usuario) VALUES (?, ?)";
+
+                try {
+
+                    PreparedStatement stmt = conexao.prepareStatement(sql);
+
+                    stmt.setString(1, nomeusuario);
+                    stmt.setString(2, senha);
+
+                    stmt.executeUpdate();
+
+                    System.out.println("""
+                Carregando....
+
+                --------CADASTRO REALIZADO--------
+
+                Sua conta foi criada com sucesso.
+                """);
+
+                    return new User(nomeusuario, senha);
+
+                } catch (SQLException ex) {
+                    System.out.println("Erro ao cadastrar usuário: " + ex.getMessage());
+                }
             }
 
             System.out.println("""

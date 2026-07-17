@@ -4,3 +4,7 @@ out/
 build/
 *.class
 .log
+
+# Configurações privadas
+config.properties
+

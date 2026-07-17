@@ -1,18 +1,52 @@
 package application;
 
+import account.Login;
 import account.User;
+import connection.DatabaseService;
 import library.LibraryService;
-import account.UserService;
+import account.Register;
 
+import java.sql.Connection;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner (System.in);
 
-        UserService userService = new UserService();
-        User user = userService.cadastrar();
+        DatabaseService databaseService = new DatabaseService();
+        Connection conexao = databaseService.iniciarConexao();
+        Register register = new Register(conexao);
+        Login login = new Login(conexao, register);
+
+        boolean opcaoValida = true;
+        User user = null;
+
+        while (opcaoValida) {
+
+            System.out.println("----TELA INICIAL----");
+            System.out.println("Como deseja entrar?");
+            System.out.println("[1] Login");
+            System.out.println("[2] Cadastro");
+
+            String entrar = scanner.nextLine();
+
+            switch (entrar) {
+
+                case "1":
+                    user = login.login(scanner);
+                    opcaoValida = false;
+                    break;
+
+                case "2":
+                    user = register.cadastrar(scanner);
+                    opcaoValida = false;
+                    break;
+
+                default:
+                    System.out.println("Opção inválida! Tente novamente.\n");
+            }
+        }
 
         LibraryService libraryService = new LibraryService();
 
