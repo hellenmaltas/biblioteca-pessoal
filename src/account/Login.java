@@ -18,9 +18,7 @@ public class Login {
 
     public User login(Scanner scanner) {
 
-        boolean tentarNovamente = true;
-
-        while (tentarNovamente) {
+        while (true) {
 
             System.out.println("""
                     -------- LOGIN --------
@@ -34,52 +32,50 @@ public class Login {
 
             String sql = "SELECT * FROM usuario WHERE nome_usuario = ? AND senha_usuario = ?";
 
-            try {
-
-                PreparedStatement stmt = conexao.prepareStatement(sql);
+            try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
 
                 stmt.setString(1, nomeusuario);
                 stmt.setString(2, senha);
 
-                ResultSet resultado = stmt.executeQuery();
+                try (ResultSet resultado = stmt.executeQuery()) {
 
-                if (resultado.next()) {
+                    if (resultado.next()) {
 
-                    System.out.println("Login realizado com sucesso!");
+                        System.out.println("Login realizado com sucesso!");
 
-                    return new User(
-                            resultado.getString("nome_usuario"),
-                            resultado.getString("senha_usuario")
-                    );
+                        return new User(
+                                resultado.getInt("id_usuario"),
+                                resultado.getString("nome_usuario"),
+                                resultado.getString("senha_usuario")
+                        );
 
-                } else {
+                    } else {
 
-                    System.out.println("""
-                            Não foi possível realizar o login.
+                        System.out.println("""
+                                
+                                Não foi possível realizar o login.
+                                
+                                Usuário ou senha incorretos.
+                                
+                                [1] Tentar novamente
+                                [2] Fazer cadastro
+                                """);
 
-                            Usuário ou senha incorretos.
+                        String escolha = scanner.nextLine();
 
-                            [1] Tentar novamente
-                            [2] Fazer cadastro
-                            """);
+                        switch (escolha) {
 
-                    String escolha = scanner.nextLine();
+                            case "1":
+                                break;
 
-                    switch (escolha) {
+                            case "2":
+                                return register.cadastrar(scanner);
 
-                        case "1":
-                            break;
-
-                        case "2":
-                            return register.cadastrar(scanner);
-
-                        default:
-                            System.out.println("Comando inválido! Escolha entre [1] e [2]");
+                            default:
+                                System.out.println("Comando inválido! Escolha entre [1] e [2]");
+                        }
                     }
                 }
-
-                resultado.close();
-                stmt.close();
 
             } catch (SQLException ex) {
 
@@ -87,7 +83,5 @@ public class Login {
                 return null;
             }
         }
-
-        return null;
     }
 }

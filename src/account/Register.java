@@ -1,8 +1,6 @@
 package account;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Scanner;
 
 public class Register {
@@ -19,22 +17,22 @@ public class Register {
        
         --------CADASTRO DA BIBLIOTECA--------
         
-              """);
+        """);
 
         while (true) {
 
             System.out.println("Digite o nome de usuário que deseja criar:");
             String nomeusuario = scanner.nextLine();
 
-            System.out.println("Digita a senha do seu usuário: ");
+            System.out.println("Digite a senha do seu usuário:");
             String senha = scanner.nextLine();
-
 
             boolean letraMaiuscula = false;
             boolean temNumero = false;
             boolean letraMinuscula = false;
 
             for (int i = 0; i < senha.length(); i++) {
+
                 char c = senha.charAt(i);
 
                 if (Character.isUpperCase(c)) {
@@ -48,54 +46,67 @@ public class Register {
                 if (Character.isDigit(c)) {
                     temNumero = true;
                 }
-
             }
 
-            if (nomeusuario.length() <= 9 && senha.length() <= 9 && letraMaiuscula && letraMinuscula && temNumero) {
+            if (!nomeusuario.isEmpty()
+                    && nomeusuario.length() <= 9
+                    && senha.length() <= 9
+                    && letraMaiuscula
+                    && letraMinuscula
+                    && temNumero) {
 
                 String sql = "INSERT INTO usuario (nome_usuario, senha_usuario) VALUES (?, ?)";
 
-                try {
-
-                    PreparedStatement stmt = conexao.prepareStatement(sql);
+                try (PreparedStatement stmt = conexao.prepareStatement(
+                        sql,
+                        Statement.RETURN_GENERATED_KEYS)) {
 
                     stmt.setString(1, nomeusuario);
                     stmt.setString(2, senha);
 
                     stmt.executeUpdate();
 
-                    System.out.println("""
-                Carregando....
+                    try (ResultSet resultado = stmt.getGeneratedKeys()) {
 
-                --------CADASTRO REALIZADO--------
+                        if (resultado.next()) {
 
-                Sua conta foi criada com sucesso.
-                """);
+                            int id = resultado.getInt(1);
 
-                    return new User(nomeusuario, senha);
+                            System.out.println("""
+                            
+                            Carregando....
+
+                            --------CADASTRO REALIZADO--------
+
+                            Sua conta foi criada com sucesso.
+                            """);
+
+                            return new User(id, nomeusuario, senha);
+                        }
+                    }
 
                 } catch (SQLException ex) {
+
                     System.out.println("Erro ao cadastrar usuário: " + ex.getMessage());
                 }
             }
 
             System.out.println("""
-                     Usuário ou senha inválidos!
                     
-                     Usuário:
-                     • Até 9 caracteres.
+                    Usuário ou senha inválidos!
                     
-                     Senha:
-                     • Até 9 caracteres.
-                     • Pelo menos 1 letra maiúscula.
-                     • Pelo menos 1 letra minúscula.
-                     • Pelo menos 1 número.
+                    Usuário:
+                    • Não pode ficar vazio.
+                    • Até 9 caracteres.
                     
-                     Tente novamente.
+                    Senha:
+                    • Até 9 caracteres.
+                    • Pelo menos 1 letra maiúscula.
+                    • Pelo menos 1 letra minúscula.
+                    • Pelo menos 1 número.
+                    
+                    Tente novamente.
                     """);
         }
     }
 }
-
-
-
